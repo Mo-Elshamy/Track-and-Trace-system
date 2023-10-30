@@ -4,9 +4,6 @@ import os
 from pyzbar import pyzbar    #Qrcode library
 import pytesseract as tess   #text library
 tess.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  #the path differ from pc to another
-
-
-#os.remove(imagescanned)
 from PIL import Image
 
 
@@ -26,34 +23,33 @@ while True:
 
             _, frame = camera.read()
 
-            #cv2.imwrite('test.jpg', frame)             #savig image
+            cv2.imwrite('test.jpg', frame)             #savig image (for text reading)
 
             decodedObjectes = pyzbar.decode(frame)      #Read the Qr code and store it
             decodedStrings = []
 
             for obj in decodedObjectes:
-            #    QRdata = obj.data.decode('utf-8')  # Decode the bytes object into a string
-               print(" QR Data:", obj.data.decode('utf-8'))  # Print the decoded string
-               decodedStrings.append(obj.data.decode('utf-8'))  # Append the decoded string to the list
+               QRdata = obj.data.decode('utf-8')                 # Decode the bytes object into a string
+               print(" QR Data:", obj.data.decode('utf-8'))      # Print the decoded string
+               decodedStrings.append(obj.data.decode('utf-8'))   # Append the decoded string to the list
 
             QRdata = decodedStrings
             print(QRdata)
             print("*********************************************")
 
 
-            img = Image.open('test.jpg')
-            # text = tess.image_to_string(img)
+            img = Image.open('test.jpg')                         
+            text = tess.image_to_string(img)                     #Extracting the text from the saved img
 
-            text = "['Hi EGPI lets try the program']"
             print("Text Data:",text)
 
             if QRdata and text:
 
-                # QRdata = QRdata.replace(" ", "").replace("\n", "")
-                # text = text.replace(" ", "").replace("\n", "")
-                #
-                # QRdata = QRdata.lower()
-                # text = text.lower()
+                QRdata = QRdata.replace(" ", "").replace("\n", "")  
+                text = text.replace(" ", "").replace("\n", "")      
+            
+                QRdata = QRdata.lower()
+                text = text.lower()
 
                 if QRdata == text:
                     print("accepted")
@@ -66,14 +62,4 @@ while True:
                 print("error")
                 ser.write("rejected".strip().encode())
 
-            #os.remove('test.jpg')
-
-
-
-
-
-
-
-
-
-
+            os.remove('test.jpg')
